@@ -10,7 +10,7 @@ class TecnicoController extends Controller
 
     public function __construct()
     {
-        
+
         $this->middleware('can:tecnicos.index')->only('index');
         $this->middleware('can:tecnicos.create')->only('create', 'store');
         $this->middleware('can:tecnicos.edit')->only('edit', 'update');
@@ -67,12 +67,23 @@ class TecnicoController extends Controller
     {
 
         $this->validate($request, [
-            'nombre' => 'required',
-            'apellido' => 'required',
-            'email' => 'required',
-            'telefono' => 'required',
+            'nombre' => 'required|string|max:50',
+            'apellido' => 'required|string|max:50',
+            'email' => 'required|email|unique:tecnicos,email',
 
+        ], [
+            'nombre.unique' => 'Ya existe un técnico con ese nombre y apellido.',
+            'email.unique' => 'Ese email ya está registrado.',
         ]);
+
+        $exists = Tecnico::where('nombre', $request->nombre)
+            ->where('apellido', $request->apellido)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors(['nombre' => 'Ya existe un técnico con ese nombre y apellido.']);
+        }
+
 
 
         $tecnico = new Tecnico();
@@ -99,10 +110,12 @@ class TecnicoController extends Controller
     public function update(Request $request, string $id)
     {
         $this->validate($request, [
-            'nombre' => 'required',
-            'apellido' => 'required',
-            'email' => 'required',
-            'telefono' => 'required',
+            'nombre' => 'required|string|max:50|unique:tecnicos,nombre,' . $id . ',id,apellido,' . $request->apellido,
+            'apellido' => 'required|string|max:50',
+            'email' => 'required|email|unique:tecnicos,email,' . $id,
+        ], [
+            'nombre.unique' => 'Ya existe un técnico con ese nombre y apellido.',
+            'email.unique' => 'Ese email ya está registrado.',
         ]);
 
         $tecnico = Tecnico::findOrFail($id);

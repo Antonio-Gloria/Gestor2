@@ -4,12 +4,14 @@
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="card shadow">
+                <div class="card shadow" style="width: 100%">
                     <div class="card-header bg-primary text-white">
                         <h4 class="mb-0">Crear nuevo usuario</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="width: 100%">
                         <form action="{{ route('users.store') }}" method="POST">
+                            @csrf
+
                             @if ($errors->any())
                                 <div class="alert alert-danger">
                                     <ul>
@@ -19,7 +21,7 @@
                                     </ul>
                                 </div>
                             @endif
-                            @csrf
+
                             <div class="mb-3">
                                 <label for="name" class="form-label">Nombre y Apellido</label>
                                 <input type="text" name="name" class="form-control" value="{{ old('name') }}"
@@ -43,7 +45,13 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Crear Usuario</button>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ route('users.index') }}" class="btn btn-outline-danger">
+                                    <i class="fas fa-times-circle"></i>Cancelar</a>
+                                <button type="submit" class="btn btn-outline-success">
+                                    <i class="fas fa-user-plus"></i>Crear Usuario</button>
+                            </div>
                         </form>
                     </div>
                 </div>

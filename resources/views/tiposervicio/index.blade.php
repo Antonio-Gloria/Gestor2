@@ -14,13 +14,13 @@
             <hr>
             <br>
             <div class="d-flex justify-content-end mb-3">
-                <a href="{{ route('tiposervicios.create') }}" class="btn btn-outline-success me-2">Agregar un Nuevo Tipo de
+                <a href="{{ route('tiposervicios.create') }}" class="btn btn-outline-success mx-2">Agregar un Nuevo Tipo de
                     Servicio</a>
                 <a href="{{ route('home') }}" class="btn btn-outline-primary">Regresar</a>
             </div>
 
-            <div class="card shadow" style="width=100%">
-                <div class="card-body">
+            <div class="card shadow" style="width:100%">
+                <div class="card-body" style="width: 100%">
                     <table id="example" class="table table-striped table-bordered" style="width=100%">
                         <thead>
                             <tr>

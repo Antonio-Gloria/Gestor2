@@ -10,7 +10,7 @@ class TipoServicioController extends Controller
 
     public function __construct()
     {
-        
+
         $this->middleware('can:tiposervicios.index')->only('index');
         $this->middleware('can:tiposervicios.create')->only('create', 'store');
         $this->middleware('can:tiposervicios.edit')->only('edit', 'update');
@@ -66,11 +66,13 @@ class TipoServicioController extends Controller
     public function store(Request $request)
     {
 
-        $this->validate($request, [
-            'nombre' => 'required',
+        $validated = $request->validate([
+            'nombre' => 'required|unique:tipo_servicios,nombre',
             'descripcion' => 'required',
-
+        ], [
+            'nombre.unique' => 'Este tipo de servicio ya está registrado.',
         ]);
+
 
 
         $tiposervicio = new TipoServicio();
@@ -95,8 +97,10 @@ class TipoServicioController extends Controller
     public function update(Request $request, string $id)
     {
         $this->validate($request, [
-            'nombre' => 'required',
-            'descripcion' => 'required',
+            'nombre' => 'required|string|max:255|unique:tipo_servicios,nombre,' . $id,
+            'descripcion' => 'required|string|max:255',
+        ], [
+            'nombre.unique' => 'Ya existe un tipo de servicio con ese nombre.',
         ]);
 
         $tiposervicio = TipoServicio::findOrFail($id);
