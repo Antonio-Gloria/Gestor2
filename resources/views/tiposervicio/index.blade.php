@@ -19,9 +19,9 @@
                 <a href="{{ route('home') }}" class="btn btn-outline-primary">Regresar</a>
             </div>
 
-            <div class="card shadow">
+            <div class="card shadow" style="width=100%">
                 <div class="card-body">
-                    <table id="example" class="table table-striped table-bordered" style="width:100%">
+                    <table id="example" class="table table-striped table-bordered" style="width=100%">
                         <thead>
                             <tr>
                                 <th>Acciones</th>
