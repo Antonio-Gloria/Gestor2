@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        
+
         $this->middleware('can:users.index')->only('index');
         $this->middleware('can:users.create')->only('create', 'store');
         $this->middleware('can:users.edit')->only('edit', 'update');
@@ -22,7 +22,7 @@ class UserController extends Controller
     {
         return view('dashboard');
     }
-    
+
 
     public function index()
     {
@@ -33,14 +33,14 @@ class UserController extends Controller
 
 
     public function cargarDT($consulta)
-{
-    $usuarios = [];
-    foreach ($consulta as $key => $value) {
-        $ruta = "eliminar" . $value['id'];
-        $eliminar = route('users.destroy', $value['id']);
-        $actualizar = route('users.edit', $value['id']);
+    {
+        $usuarios = [];
+        foreach ($consulta as $key => $value) {
+            $ruta = "eliminar" . $value['id'];
+            $eliminar = route('users.destroy', $value['id']);
+            $actualizar = route('users.edit', $value['id']);
 
-        $acciones = '
+            $acciones = '
         <div class="btn-acciones">
             <div class="btn-circle">
                 <a href="' . $actualizar . '" role="button" class="btn btn-outline-success" title="Actualizar">
@@ -52,39 +52,41 @@ class UserController extends Controller
             </div>
         </div>';
 
-        $roles = implode(', ', $value->getRoleNames()->toArray());
+            $roles = implode(', ', $value->getRoleNames()->toArray());
 
-        $usuarios[$key] = array(
-            $acciones,
-            $value['id'],
-            $value['name'],
-            $value['email'],
-            $roles
-        );
+            $usuarios[$key] = array(
+                $acciones,
+                $value['id'],
+                $value['name'],
+                $value['email'],
+                $roles
+            );
+        }
+
+        return $usuarios;
     }
-
-    return $usuarios;
-}
 
 
     public function create()
     {
-        $this->authorize('users.create'); 
-        $roles = Role::all(); 
+        $this->authorize('users.create');
+        $roles = Role::all();
         return view('user.create', compact('roles'));
     }
 
     public function store(Request $request)
     {
-  
+
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'name' => 'required|string|max:255|unique:users,name',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
-            'role' => 'required|exists:roles,name', 
+            'role' => 'required|exists:roles,name',
+        ], [
+            'name.unique' => 'El nombre ya está registrado. Por favor, elige otro.',
+            'email.unique' => 'El correo electrónico ya está registrado. Por favor, elige otro.',
         ]);
 
-       
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
@@ -96,39 +98,45 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente con el rol de ' . $validatedData['role']);
     }
 
+
     public function edit(User $user)
     {
-        $this->authorize('users.edit'); 
+        $this->authorize('users.edit');
         $roles = Role::all();
-        return view('user.edit', compact('user', 'roles')); 
+        return view('user.edit', compact('user', 'roles'));
     }
-    
+
     public function update(Request $request, User $user)
-{
-    $this->authorize('users.edit'); 
+    {
+        $this->authorize('users.edit');
 
-    $validatedData = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email,' . $user->id,
-        'password' => 'nullable|min:8', 
-        'role' => 'required|exists:roles,name', 
-    ]);
 
-    $user->update([
-        'name' => $validatedData['name'],
-        'email' => $validatedData['email'],
-        'password' => $validatedData['password'] ? bcrypt($validatedData['password']) : $user->password,
-    ]);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:users,name,' . $user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|min:8',
+            'role' => 'required|exists:roles,name',
+        ], [
+            'name.unique' => 'El nombre ya está registrado. Por favor, elige otro.',
+            'email.unique' => 'El correo electrónico ya está registrado. Por favor, elige otro.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+        ]);
 
-    $user->syncRoles($validatedData['role']);
 
-    return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente'); 
-}
+        $user->update([
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => $validatedData['password'] ? bcrypt($validatedData['password']) : $user->password,
+        ]);
 
+        $user->syncRoles($validatedData['role']);
+
+        return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente');
+    }
 
     public function destroy(User $user)
     {
-        $this->authorize('users.delete'); 
+        $this->authorize('users.delete');
         $user->delete();
         return redirect()->route('users.index')->with('success', 'Usuario eliminado exitosamente');
     }

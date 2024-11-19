@@ -16,9 +16,11 @@ return new class extends Migration
             $table->string('nombre', 50);
             $table->string('apellido', 50);
             $table->string('email', 100)->unique();
-            $table->string('telefono', 25);
+            $table->string('telefono', 25)->nullable();
             $table->integer('status');
             $table->timestamps();
+
+            $table->unique(['nombre', 'apellido']);
         });
     }
 

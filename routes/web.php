@@ -6,31 +6,51 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 
-//usuarios
-Route::middleware(['auth', 'can:users.create'])->group(function () {
-    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-    Route::post('/users', [UserController::class, 'store'])->name('users.store');
-});
+// Ruta de bienvenida
 Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+// Autenticación
+Auth::routes(['register' => false]);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-// Ruta para crear servicio sin loggearse
+
+// Usuarios
+Route::middleware(['auth', 'can:users.create'])->group(function () {
+    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+});
+Route::resource('/users', UserController::class)->middleware('auth')->except(['show']);
+Route::get('users/{id}', function ($id) {
+    return redirect()->route('users.index')->with('error', 'La acción no está permitida.');
+})->where('id', '[0-9]+');
+// Servicios
 Route::get('/servicios/create', [ServicioController::class, 'create'])->name('servicios.create');
 Route::post('/servicios', [ServicioController::class, 'store'])->name('servicios.store');
-Route::resource('/servicios', App\Http\Controllers\ServicioController::class)->except(['create', 'store'])->middleware('auth');
-Route::resource('/users', UserController::class)->middleware('auth')->except(['show']);
-Route::resource('/tiposervicios', App\Http\Controllers\TipoServicioController::class)->middleware('auth');
-Route::resource('/tecnicos', App\Http\Controllers\TecnicoController::class)->middleware('auth');
+Route::resource('/servicios', ServicioController::class)->except(['create', 'store', 'show'])->middleware('auth');
+Route::get('Servicios/{id}', function ($id) {
+    return redirect()->route('Servicios.index')->with('error', 'La acción no está permitida.');
+})->where('id', '[0-9]+');
+// Tipos de Servicios
+Route::resource('tiposervicios', App\Http\Controllers\TipoServicioController::class)->except('show')->middleware('auth');
 Route::get('delete-tiposervicio/{tiposervicio_id}', [App\Http\Controllers\TipoServicioController::class, 'delete_tiposervicio'])->name('delete-tiposervicio')->middleware('auth');
+Route::get('tiposervicios/{id}', function ($id) {
+    return redirect()->route('tiposervicios.index')->with('error', 'La acción no está permitida.');
+})->where('id', '[0-9]+');
+
+// Técnicos
+Route::resource('/tecnicos', App\Http\Controllers\TecnicoController::class)->except('show')->middleware('auth');
 Route::get('delete-tecnico/{tecnico_id}', [App\Http\Controllers\TecnicoController::class, 'delete_tecnico'])->name('delete-tecnico')->middleware('auth');
-Route::get('realizado-servicio/{servicio_id}', [App\Http\Controllers\ServicioController::class, 'realizado_servicio'])->name('realizado-servicio')->middleware('auth');
-Route::get('delete-servicio/{servicio_id}', [App\Http\Controllers\ServicioController::class, 'delete_servicio'])->name('delete-servicio')->middleware('auth');
+Route::get('tecnicos/{id}', function ($id) {
+    return redirect()->route('tecnicoos.index')->with('error', 'La acción no está permitida.');
+})->where('id', '[0-9]+');
+// Servicios personalizados
+Route::get('realizado-servicio/{servicio_id}', [ServicioController::class, 'realizado_servicio'])->name('realizado-servicio')->middleware('auth');
+Route::get('delete-servicio/{servicio_id}', [ServicioController::class, 'delete_servicio'])->name('delete-servicio')->middleware('auth');
 Route::get('/servicio/realizado', [ServicioController::class, 'realizado'])->name('servicios.realizado')->middleware('auth');
 Route::get('/info-servicio', [ServicioController::class, 'info'])->name('info-servicio')->middleware('auth');
 Route::get('/servicio/info/{id}', [ServicioController::class, 'infoServicio'])->name('info-servicio')->middleware('auth');
-Route::post('/servicio/realizar', [ServicioController::class, 'realizarServicio'])->name('realizar-servicio')->middleware('auth');
 Route::post('/realizar-servicio', [ServicioController::class, 'realizarServicio'])->name('realizar-servicio')->middleware('auth');
+
+// Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
