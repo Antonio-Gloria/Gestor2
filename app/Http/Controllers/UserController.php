@@ -51,7 +51,7 @@ class UserController extends Controller
                 <form action="' . $eliminar . '" method="POST" style="display:inline-block;">
                       ' . csrf_field() . '
                       ' . method_field('DELETE') . '
-                    <button type="submit" class="btn btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <button type="submit" class="btn btn-outline-danger" title="Eliminar" >
                         <i class="far fa-trash-alt"></i>
                     </button>
                 </form>
