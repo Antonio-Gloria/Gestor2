@@ -27,7 +27,7 @@
                                 <label for="nombre" class="form-label">Nombre</label>
                                 <input type="text" class="form-control" id="nombre" name="nombre"
                                     value="{{ old('nombre') }}" required minlength="3" maxlength="50"
-                                    pattern="[A-Za-z0-9 ]+" title="Solo se permiten letras y números">
+                                    >
                                 @error('nombre')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -37,7 +37,7 @@
                                 <label for="apellido" class="form-label">Apellido</label>
                                 <input type="text" class="form-control" id="apellido" name="apellido"
                                     value="{{ old('apellido') }}" required minlength="3" maxlength="50"
-                                    pattern="[A-Za-z0-9 ]+" title="Solo se permiten letras y números">
+                                    >
                                 @error('apellido')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror

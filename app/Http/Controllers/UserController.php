@@ -40,17 +40,24 @@ class UserController extends Controller
             $eliminar = route('users.destroy', $value['id']);
             $actualizar = route('users.edit', $value['id']);
 
+
+
             $acciones = '
         <div class="btn-acciones">
             <div class="btn-circle">
-                <a href="' . $actualizar . '" role="button" class="btn btn-outline-success" title="Actualizar">
-                    <i class="far fa-edit"></i>
-                </a>
-                <a href="' . $eliminar . '" role="button" class="btn btn-outline-danger" title="Eliminar" onclick="modal(' . $value['id'] . ')" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                    <i class="far fa-trash-alt"></i>
-                </a>
+        <a href="' . $actualizar . '" role="button" class="btn btn-outline-success" title="Actualizar">
+            <i class="far fa-edit"></i>
+        </a>
+                <form action="' . $eliminar . '" method="POST" style="display:inline-block;">
+                      ' . csrf_field() . '
+                      ' . method_field('DELETE') . '
+                    <button type="submit" class="btn btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="far fa-trash-alt"></i>
+                    </button>
+                </form>
             </div>
         </div>';
+
 
             $roles = implode(', ', $value->getRoleNames()->toArray());
 

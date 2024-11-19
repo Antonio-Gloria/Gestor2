@@ -21,6 +21,7 @@ Route::middleware(['auth', 'can:users.create'])->group(function () {
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
 });
 Route::resource('/users', UserController::class)->middleware('auth')->except(['show']);
+Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 Route::get('users/{id}', function ($id) {
     return redirect()->route('users.index')->with('error', 'La acción no está permitida.');
 })->where('id', '[0-9]+');
@@ -28,8 +29,8 @@ Route::get('users/{id}', function ($id) {
 Route::get('/servicios/create', [ServicioController::class, 'create'])->name('servicios.create');
 Route::post('/servicios', [ServicioController::class, 'store'])->name('servicios.store');
 Route::resource('/servicios', ServicioController::class)->except(['create', 'store', 'show'])->middleware('auth');
-Route::get('Servicios/{id}', function ($id) {
-    return redirect()->route('Servicios.index')->with('error', 'La acción no está permitida.');
+Route::get('servicios/{id}', function ($id) {
+    return redirect()->route('servicios.index')->with('error', 'La acción no está permitida.');
 })->where('id', '[0-9]+');
 // Tipos de Servicios
 Route::resource('tiposervicios', App\Http\Controllers\TipoServicioController::class)->except('show')->middleware('auth');
@@ -42,7 +43,7 @@ Route::get('tiposervicios/{id}', function ($id) {
 Route::resource('/tecnicos', App\Http\Controllers\TecnicoController::class)->except('show')->middleware('auth');
 Route::get('delete-tecnico/{tecnico_id}', [App\Http\Controllers\TecnicoController::class, 'delete_tecnico'])->name('delete-tecnico')->middleware('auth');
 Route::get('tecnicos/{id}', function ($id) {
-    return redirect()->route('tecnicoos.index')->with('error', 'La acción no está permitida.');
+    return redirect()->route('tecnicos.index')->with('error', 'La acción no está permitida.');
 })->where('id', '[0-9]+');
 // Servicios personalizados
 Route::get('realizado-servicio/{servicio_id}', [ServicioController::class, 'realizado_servicio'])->name('realizado-servicio')->middleware('auth');
@@ -51,6 +52,5 @@ Route::get('/servicio/realizado', [ServicioController::class, 'realizado'])->nam
 Route::get('/info-servicio', [ServicioController::class, 'info'])->name('info-servicio')->middleware('auth');
 Route::get('/servicio/info/{id}', [ServicioController::class, 'infoServicio'])->name('info-servicio')->middleware('auth');
 Route::post('/realizar-servicio', [ServicioController::class, 'realizarServicio'])->name('realizar-servicio')->middleware('auth');
-
 // Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');

@@ -28,11 +28,13 @@
                                 <label for="nombre" class="form-label">Nombre</label>
                                 <input type="text" class="form-control" id="nombre" name="nombre"
                                     value="{{ old('nombre') }}" required minlength="3" maxlength="50"
-                                    pattern="[A-Za-z0-9 ]+" title="Solo se permiten letras y números">
+                                    pattern="[A-Za-z0-9áéíóúÁÉÍÓÚñÑ ]+"
+                                    title="Solo se permiten letras, números, espacios y acentos">
                                 @error('nombre')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
+
 
                             <div class="mb-3">
                                 <label for="descripcion" class="form-label">Descripción</label>
